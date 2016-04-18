@@ -5,6 +5,6 @@ MAINTAINER Mohammad Nasirifar "far.nasiri.m@cafebazaar.ir"
 
 WORKDIR /
 
-COPY talk /
+ADD talk talk
 
 ENTRYPOINT ["/talk"]
