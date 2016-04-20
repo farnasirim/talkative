@@ -6,7 +6,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 	"time"
 )
 
@@ -46,7 +48,6 @@ func humanReadable(tm int64) string {
 func info(w http.ResponseWriter, r *http.Request) {
 	var toWrite bytes.Buffer
 	hostname, err := os.Hostname()
-
 	if err != nil {
 		toWrite.Write([]byte("Could not read hostname"))
 	} else {
@@ -78,7 +79,19 @@ func info(w http.ResponseWriter, r *http.Request) {
 	w.Write(toWrite.Bytes())
 }
 
+func handleSignals() {
+	signalsChannel := make(chan os.Signal, 1)
+	signal.Notify(signalsChannel, syscall.SIGKILL, syscall.SIGINT, syscall.SIGTERM)
+	for signal := range signalsChannel {
+		fmt.Println("received signal:")
+		fmt.Println(signal.String())
+		fmt.Println()
+	}
+
+}
+
 func main() {
+	go handleSignals()
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", info)
 	log.Fatalln(http.ListenAndServe(":80", mux))
