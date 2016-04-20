@@ -5,8 +5,8 @@ Talkative is a very simple web application to ease testing certain kubernetes fe
 ```
 docker pull colonelmo/talkative
 ```
-and then
+Run the container and 
 ```
-curl -L 127.0.0.1/test
-curl -L 127.0.0.1/count
+curl -L $SERVER_IP/test
+curl -L $SERVER_IP/count
 ```
