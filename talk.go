@@ -12,6 +12,8 @@ import (
 	"time"
 )
 
+var totalRequests = 0
+var globalCount = 0
 var startTime int64 = time.Now().UnixNano()
 
 const (
@@ -46,6 +48,7 @@ func humanReadable(tm int64) string {
 }
 
 func info(w http.ResponseWriter, r *http.Request) {
+	totalRequests++
 	var toWrite bytes.Buffer
 	hostname, err := os.Hostname()
 	if err != nil {
@@ -72,9 +75,41 @@ func info(w http.ResponseWriter, r *http.Request) {
 	toWrite.Write([]byte(humanReadable(time.Now().UnixNano() - startTime)))
 	toWrite.Write([]byte("\n"))
 
+	toWrite.Write([]byte("Total number of requests: "))
+	toWrite.Write([]byte(fmt.Sprint(totalRequests)))
+	toWrite.Write([]byte("\n"))
+
 	toWrite.Write([]byte("\n"))
 
 	//Shouldn't this be log.Println() ?
+	fmt.Println(string(toWrite.Bytes()))
+	w.Write(toWrite.Bytes())
+}
+
+func counter(w http.ResponseWriter, r *http.Request) {
+	globalCount++
+	var toWrite bytes.Buffer
+	hostname, err := os.Hostname()
+	if err != nil {
+		toWrite.Write([]byte("Could not read hostname"))
+	} else {
+		toWrite.Write([]byte("This is "))
+		toWrite.Write([]byte(hostname))
+	}
+	toWrite.Write([]byte("\n"))
+
+	toWrite.Write([]byte("Host: "))
+	toWrite.Write([]byte(r.Host))
+	toWrite.Write([]byte("\n"))
+
+	toWrite.Write([]byte("Requested path: "))
+	toWrite.Write([]byte(r.URL.EscapedPath()))
+	toWrite.Write([]byte("\n"))
+
+	toWrite.Write([]byte("Counting: "))
+	toWrite.Write([]byte(fmt.Sprint(globalCount)))
+	toWrite.Write([]byte("\n"))
+
 	fmt.Println(string(toWrite.Bytes()))
 	w.Write(toWrite.Bytes())
 }
@@ -93,6 +128,7 @@ func handleSignals() {
 func main() {
 	go handleSignals()
 	mux := http.NewServeMux()
+	mux.HandleFunc("/count", counter)
 	mux.HandleFunc("/", info)
 	log.Fatalln(http.ListenAndServe(":80", mux))
 }
