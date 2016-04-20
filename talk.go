@@ -73,6 +73,8 @@ func info(w http.ResponseWriter, r *http.Request) {
 
 	toWrite.Write([]byte("\n"))
 
+	//Shouldn't this be log.Println() ?
+	fmt.Println(string(toWrite.Bytes()))
 	w.Write(toWrite.Bytes())
 }
 
