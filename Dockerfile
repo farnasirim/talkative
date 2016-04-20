@@ -20,6 +20,7 @@ RUN set -ex \
 		gcc \
 		musl-dev \
 		openssl \
+		git \
 	\
 	&& mkdir -p /usr/local/bootstrap \
 	&& wget -q "$GOLANG_BOOTSTRAP_URL" -O golang.tar.gz \
