@@ -20,7 +20,6 @@ RUN set -ex \
 		gcc \
 		musl-dev \
 		openssl \
-		git \
 	\
 	&& mkdir -p /usr/local/bootstrap \
 	&& wget -q "$GOLANG_BOOTSTRAP_URL" -O golang.tar.gz \
@@ -48,6 +47,7 @@ ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 WORKDIR $GOPATH
 
+RUN apk add --no-cache git
 RUN go get github.com/colonelmo/talkative
 
 ENTRYPOINT ["talkative"]
