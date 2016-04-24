@@ -13,6 +13,7 @@ clean:
 	rm talk 1>/dev/null 2>/dev/null || exit 0
 
 build: talk.go clean
+	go get ,/...
 	go build -o talk
 
 docker: build
