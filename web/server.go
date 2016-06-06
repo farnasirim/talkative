@@ -37,6 +37,7 @@ func (s *Server) Info(w http.ResponseWriter, r *http.Request) {
 
 	marshalledResponse, err := yaml.Marshal(&respo)
 	fmt.Println(string(marshalledResponse))
+	w.Write([]byte("v1.1\n"))
 	w.Write(marshalledResponse)
 }
 
